@@ -97,6 +97,10 @@ type BaseConfig struct {
 	// AppDBBackend defines the type of Database to use for the application and snapshots databases.
 	// An empty string indicates that the Tendermint config's DBBackend value should be used.
 	AppDBBackend string `mapstructure:"app-db-backend"`
+
+	// ForceCompactInterval indicates how often to force a compact operation
+	// on every nth block cut.
+	ForceCompactInterval int64 `mapstructure:"force-compact-interval"`
 }
 
 // APIConfig defines the API listener configuration.

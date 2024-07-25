@@ -96,6 +96,10 @@ func SetChainID(chainID string) func(*BaseApp) {
 	return func(app *BaseApp) { app.chainID = chainID }
 }
 
+func SetForceCompactInterval(interval int64) func(*BaseApp) {
+	return func(app *BaseApp) { app.forceCompactInterval = interval }
+}
+
 func (app *BaseApp) SetName(name string) {
 	if app.sealed {
 		panic("SetName() on sealed BaseApp")

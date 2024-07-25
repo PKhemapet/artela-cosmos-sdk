@@ -444,8 +444,15 @@ func (app *BaseApp) Commit() abci.ResponseCommit {
 	// Write the DeliverTx state into branched storage and commit the MultiStore.
 	// The write to the DeliverTx state writes all state transitions to the root
 	// MultiStore (app.cms) so when Commit() is called is persists those values.
+	startWriteTime := time.Now()
 	app.deliverState.ms.Write()
+	app.logger.Debug("ms.Write", "height", header.Height, "cost of time",
+		fmt.Sprintf(" %.2fms", float64(time.Since(startWriteTime).Microseconds())/1000))
+
+	startCommitTime := time.Now()
 	commitID := app.cms.Commit()
+	app.logger.Debug("cms.Commit", "height", header.Height, "cost of time",
+		fmt.Sprintf(" %.2fms", float64(time.Since(startCommitTime).Microseconds())/1000))
 
 	res := abci.ResponseCommit{
 		Data:         commitID.Hash,
@@ -488,9 +495,20 @@ func (app *BaseApp) Commit() abci.ResponseCommit {
 		app.halt()
 	}
 
+	go app.forceCompact(header.Height)
 	go app.snapshotManager.SnapshotIfApplicable(header.Height)
 
 	return res
+}
+
+func (app *BaseApp) forceCompact(height int64) {
+	if app.forceCompactInterval > 0 && height > 0 && height%app.forceCompactInterval == 0 {
+		app.logger.Debug("db force compact")
+		err := app.db.ForceCompact(nil, nil)
+		if err != nil {
+			app.logger.Error("db force compact", "err", err)
+		}
+	}
 }
 
 // halt attempts to gracefully shutdown the node via SIGINT and SIGTERM falling

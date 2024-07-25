@@ -148,6 +148,8 @@ type BaseApp struct { // nolint: maligned
 
 	// for artela aspect
 	aspect *djpm.Aspect
+
+	forceCompactInterval int64
 }
 
 // NewBaseApp returns a reference to an initialized BaseApp. It accepts a

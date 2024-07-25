@@ -87,6 +87,10 @@ iavl-lazy-loading = {{ .BaseConfig.IAVLLazyLoading }}
 # Second fallback (if the types.DBBackend also isn't set), is the db-backend value set in Tendermint's config.toml.
 app-db-backend = "{{ .BaseConfig.AppDBBackend }}"
 
+# ForceCompactInterval indicates how often to force a compact operation
+# on every nth block cut.
+force-compact-interval = {{ .BaseConfig.ForceCompactInterval }}
+
 ###############################################################################
 ###                         Telemetry Configuration                         ###
 ###############################################################################
